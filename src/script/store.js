@@ -54,14 +54,22 @@ const getCace = (code, name, date) => {
 };
 
 export const fundHistory = reactive({
+	cache: {},
 	data: [],
-	async getData({ code, name, enddate }) {
+	async getData({ code }) {
 		// const list = await getCace(code, name, enddate);
 		// if (list.length) {
 		// 	this.data = list;
 		// } else {
-		const data = await api.getThsFundHistory(code);
-		this.data = data;
+		const isCache = this.cache[code];
+		if (isCache) {
+			this.data = isCache;
+		} else {
+			const data = await api.getThsFundHistory(code);
+			this.cache[code] = data;
+			this.data = data;
+		}
+
 		// const history = data.map(([time, net], id) => ({
 		// 	id,
 		// 	code,
@@ -77,8 +85,16 @@ export const fundHistory = reactive({
 export const fundInfo = reactive({
 	list: [],
 	async getData({ code }) {
-		const data = await api.getFundInfo(code);
-		// this.list.push(data);
-		return data;
+		// console.log(this.list);
+		// this.list.push(code);
+		const isexist = this.list.filter((item) => item.code == code);
+		console.log(fundInfo.list, code);
+		if (isexist.length) {
+			return isexist;
+		} else {
+			const data = await api.getFundInfo(code);
+			this.list.push(data[0]);
+			return data;
+		}
 	},
 });

@@ -63,10 +63,10 @@ const queryFundInfo = async () => {
   queryinfo.value = find(data, { code });
 };
 
-const queryFund = async () => {
-  const code = fundModel.value;
-  const data = await api.getFundInfo(code);
-};
+// const queryFund = async () => {
+//   const code = fundModel.value;
+//   const data = await api.getFundInfo(code);
+// };
 
 const queryFundHistory = async () => {
   const { code } = queryinfo.value;
