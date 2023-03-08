@@ -1,6 +1,6 @@
 <template>
   <div class="right">
-    <div class="item" v-for="item in fundInfo.list" :key="item.code" @click="queryFundHistory(item.code)">
+    <div class="item" v-for="item in fundInfo.list" :key="item.code" @click="queryFundHistory(item)">
       <span>{{ item.name }}</span>
       <span>{{ item.rate }}</span>
     </div>
@@ -9,9 +9,17 @@
 <script setup>
 import { defineComponent, useCssModule, reactive, ref } from "vue";
 import { fundHistory, fundInfo } from "../script/store";
+import dayjs from "dayjs";
 
-const queryFundHistory = async (code) => {
-  fundHistory.getData({ code });
+const queryFundHistory = async (item) => {
+  const { enddate } = item;
+  const nowdate = dayjs().format("YYYY-MM-DD");
+  if (enddate == nowdate) {
+    fundHistory.getData({ code: item.code });
+  } else {
+    fundInfo.getData({ code: item.code }, { upCache: true });
+    fundHistory.getData({ code: item.code }, { upCache: true });
+  }
 };
 </script>
 <style lang="scss" scoped>

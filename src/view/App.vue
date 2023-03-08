@@ -10,7 +10,8 @@
             {{ tagOptions.label }}
           </div>
           <div class="list">
-            <div class="item" @click="tagOptions.value=item.value;tagOptions.label=item.label" v-for="item in tagOptions.list" :key="item.value">{{ item.label }}</div>
+            <div class="item" @click="tagOptions.value = item.value; tagOptions.label = item.label"
+              v-for="item in tagOptions.list" :key="item.value">{{ item.label }}</div>
           </div>
         </div>
         <input type="text" @keyup.enter="queryFundInfo" v-model="fundModel" />
@@ -24,7 +25,7 @@
       </div>
     </div>
   </header>
-  <RouterView />
+<RouterView />
 </template>
 
 <script setup>
@@ -59,8 +60,10 @@ const tagOptions = ref({
 
 const queryFundInfo = async () => {
   const code = fundModel.value;
-  const data = await fundInfo.getData({ code });
-  queryinfo.value = find(data, { code });
+  const data = await api.getFuzzyList(code);
+  console.log(data)
+  // const data = await fundInfo.getData({ code });
+  // queryinfo.value = find(data, { code });
 };
 
 // const queryFund = async () => {
@@ -80,14 +83,17 @@ header {
   justify-content: space-between;
   // align-items: center;
   border-bottom: 1px solid #e3e3e3;
+
   .marketList {
     display: flex;
     flex-grow: 1;
     border-right: 1px solid #e3e3e3;
   }
+
   .headR {
     display: flex;
     flex-direction: column;
+
     .search {
       display: flex;
       justify-content: space-between;
@@ -95,20 +101,24 @@ header {
       border-bottom: 1px solid #e3e3e3;
       // border-radius: 5px;
       overflow: hidden;
+
       .tab {
         position: relative;
         display: flex;
         align-items: center;
         justify-content: center;
         width: 50px;
+
         .cur {
           color: #4a4a4a;
         }
+
         .list {
           position: absolute;
           display: none;
         }
       }
+
       input {
         border: none;
         outline: none;
@@ -116,21 +126,23 @@ header {
         color: #4a4a4a;
       }
     }
+
     .fundInfo {
       display: flex;
       flex-direction: column;
       padding: 10px;
       flex-grow: 1;
+
       .fund_name {
         color: #333333;
         font-size: 16px;
         padding-bottom: 10px;
       }
+
       .data {
         display: flex;
         justify-content: space-between;
       }
     }
   }
-}
-</style>
+}</style>
