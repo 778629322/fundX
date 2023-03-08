@@ -1,14 +1,19 @@
 <template>
   <div class="right">
-    <div class="item" v-for="item in fundInfo.list" :key="item.code" @click="queryFundHistory(item)">
-      <span>{{ item.name }}</span>
-      <span>{{ item.rate }}</span>
+    <div class="tab"></div>
+    <div class="list">
+      <div class="item" v-for="item in fundInfo.list" :key="item.code" @click="queryFundHistory(item)">
+        <span>{{ item.name }}</span>
+        <span>{{ item.rate }}</span>
+      </div>
     </div>
-  </div>
+    <search />
+</div>
 </template>
 <script setup>
 import { defineComponent, useCssModule, reactive, ref } from "vue";
 import { fundHistory, fundInfo } from "../script/store";
+import search from "../components/search.vue";
 import dayjs from "dayjs";
 
 const queryFundHistory = async (item) => {
@@ -26,17 +31,25 @@ const queryFundHistory = async (item) => {
 .right {
   display: flex;
   width: 254px;
-  min-height: 0;
   flex-direction: column;
-  .item {
+
+  .list {
     display: flex;
-    justify-content: space-between;
-    font-size: 14px;
-    align-items: center;
-    height: 30px;
-    padding: 0 10px;
-    cursor: pointer;
-    border-bottom: 1px solid #dedede;
+    flex-grow: 1;
+    min-height: 0;
+    flex-direction: column;
+
+    .item {
+      display: flex;
+      justify-content: space-between;
+      font-size: 14px;
+      align-items: center;
+      height: 30px;
+      padding: 0 10px;
+      cursor: pointer;
+      border-bottom: 1px solid #dedede;
+    }
   }
+
 }
 </style>
