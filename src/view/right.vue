@@ -2,30 +2,25 @@
   <div class="right">
     <div class="tab"></div>
     <div class="list">
-      <div class="item" v-for="item in fundInfo.list" :key="item.code" @click="queryFundHistory(item)">
+      <div class="item" v-for="item in list" :key="item.code" @click="queryFundHistory(item)">
         <span>{{ item.name }}</span>
-        <span>{{ item.rate }}</span>
+        <span>{{ item.rate || "--" }}</span>
       </div>
     </div>
     <search />
-</div>
+  </div>
 </template>
 <script setup>
 import { defineComponent, useCssModule, reactive, ref } from "vue";
-import { fundHistory, fundInfo } from "../script/store";
+import { fundHistory, fundInfo, dynamicDB } from "../script/store";
+import { liveQuery } from "dexie";
+import { useObservable } from "@vueuse/rxjs";
 import search from "../components/search.vue";
 import dayjs from "dayjs";
 
-const queryFundHistory = async (item) => {
-  const { enddate } = item;
-  const nowdate = dayjs().format("YYYY-MM-DD");
-  if (enddate == nowdate) {
-    fundHistory.getData({ code: item.code });
-  } else {
-    fundInfo.getData({ code: item.code }, { upCache: true });
-    fundHistory.getData({ code: item.code }, { upCache: true });
-  }
-};
+const list = useObservable(
+  liveQuery(() => dynamicDB.get())
+)
 </script>
 <style lang="scss" scoped>
 .right {

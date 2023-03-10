@@ -3,14 +3,45 @@ import Dexie from "dexie";
 
 import * as api from "./api";
 
-const db = new Dexie("fund_db");
-const head = "id,code,name,time,net";
+class DB {
+	constructor() {
+		const db = new Dexie("fund_db");
+		const storeName = "code_list";
+		const head = "++code,name,status,type";
+		const sheet = {
+			[storeName]: head,
+		};
+		db.version(1).stores(sheet);
+		db.open();
+		this.db = db[storeName];
+	}
+	async get(code = "") {
+		const list = await this.db
+			.filter((item) => {
+				if (code) return item.code == code;
+				return item.code;
+			})
+			.toArray();
+		return list;
+	}
+	put(params) {
+		this.db.bulkPut(params);
+	}
+	set(key, params) {
+		this.db.update(key, params);
+	}
+	del(key) {
+		this.db.delete(key);
+	}
+}
+
+export const dynamicDB = new DB();
 
 // const getCace = (code, name, date) => {
 // 	return new Promise(async (resolve, reject) => {
 // 		try {
 // 			const sheet = {
-// 				[`${code}`]: head,
+// 				code_list: head,
 // 			};
 // 			db.version(1).stores(sheet);
 // 			db.open();
@@ -54,14 +85,14 @@ const head = "id,code,name,time,net";
 
 export const fundHistory = reactive({
 	cache: {},
+	type: "",
 	data: [],
-	async getData({ code }, { upCache = false }) {
-		if (!upCache) {
-			const isCache = this.cache[code];
-			if (isCache) {
-				this.data = isCache;
-				return;
-			}
+	async getData({ code, type }) {
+		this.type = type;
+		const isCache = this.cache[code];
+		if (isCache) {
+			this.data = isCache;
+			return;
 		}
 		const data = await api.getThsFundHistory(code);
 		this.cache[code] = data;

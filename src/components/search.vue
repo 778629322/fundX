@@ -2,7 +2,7 @@
 <template>
   <div class="search" ref="search">
     <div class="list" v-show="visibility">
-      <div class="item" v-for="item in list">
+      <div class="item" v-for="item in list" @click="active(item)">
         <span class="name">{{ item.name }}</span>
         <span class="code">{{ item.code }}</span>
       </div>
@@ -15,6 +15,8 @@
 import { defineComponent, useCssModule, reactive, ref } from "vue";
 import _ from "lodash";
 import { asyncComputed, useDebounce, onClickOutside } from "@vueuse/core";
+import { dynamicDB } from "../script/store";
+
 import * as api from "../script/api";
 
 const fundModel = ref("");
@@ -66,6 +68,17 @@ const searchFocus = () => {
   if (debounced.value) {
     visibility.value = true;
   }
+}
+
+const active = async ({ code, name, status = 0, type }) => {
+  const res = await dynamicDB.get(code);
+  if (!res.length) {
+    const params = {
+      code, name, status, type
+    }
+    dynamicDB.put([params])
+  }
+  fundModel.value = ""
 }
 
 
