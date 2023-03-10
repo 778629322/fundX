@@ -21,6 +21,18 @@ import dayjs from "dayjs";
 const list = useObservable(
   liveQuery(() => dynamicDB.get())
 )
+
+
+const queryFundHistory = async (item) => {
+  const { enddate } = item;
+  const nowdate = dayjs().format("YYYY-MM-DD");
+  if (enddate == nowdate) {
+    fundHistory.getData({ code: item.code });
+  } else {
+    fundInfo.getData({ code: item.code }, { upCache: true });
+    fundHistory.getData({ code: item.code }, { upCache: true });
+  }
+};
 </script>
 <style lang="scss" scoped>
 .right {
